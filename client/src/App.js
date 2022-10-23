@@ -1,91 +1,43 @@
-import { useEffect, useState } from "react";
-import Transaction from "../../server/models/Transaction.js";
-
+import React, { useEffect } from "react";
+import AppBar from "./components/AppBar.js";
+import "./index.css";
+import { useSelector, useDispatch } from "react-redux";
+import { Outlet } from "react-router-dom";
+import { getUser } from "./store/auth.js";
+import Cookies from "js-cookie";
+import { useState } from "react";
 function App() {
-  const [form, setForm] = useState({
-    amount: 0,
-    description: "",
-    date: "",
-  });
+  const token = Cookies.get("token");
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  async function fetchTransactions() {
-    const res = await fetch("http://localhost:4000/transaction");
-    const { data } = await res.json();
-    console.log(data);
-  }
-
-  function handleInput(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const res = await fetch("http://localhost:4000/transaction", {
-      method: "POST",
-      body: JSON.stringify(form),
+  async function fetchUser() {
+    setIsLoading(true);
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/user`, {
       headers: {
-        "content-type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
-    const data = await res.json();
-    console.log(data);
+
+    if (res.ok) {
+      const user = await res.json();
+      dispatch(getUser(user));
+    }
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+  if (isLoading) {
+    return <p>Loading,,,</p>;
   }
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>amount </label>
-
-        <input
-          type="number"
-          name="amount"
-          value={form.amount}
-          onChange={handleInput}
-          placeholder="Enter transtion amount"
-        />
-
-        <label>Description </label>
-        <input
-          type="text"
-          name="description"
-          value={form.description}
-          onChange={handleInput}
-          placeholder="Enter transtion description"
-        />
-
-        <label>date </label>
-
-        <input
-          type="date"
-          name="date"
-          value={form.date}
-          onChange={handleInput}
-        />
-
-        <button type="submit">Submit</button>
-      </form>
-
-      <br />
-
-      <section>
-        <table>
-          <thead>
-            <th>Amount</th>
-            <th>Description</th>
-            <th>Date</th>
-          </thead>
-          <tbody>
-            <tr>
-              <td>dis</td>
-              <td>amount</td>
-              <td>date</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-    </div>
+    <>
+      <AppBar />
+      <Outlet />
+    </>
   );
 }
 

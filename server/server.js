@@ -1,40 +1,33 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
 import bodyParser from "body-parser";
-import Transaction from './models/Transaction.js';
+import TransactionsApi from './router/TransactionsApi.js';
+import connect from './database/mongdb.js';
+import AuthApi from './router/AuthApi.js';
+import passport from 'passport';
+import passportConfig from './config/passport.js';
+import * as dotenv from "dotenv";
+import UserApi from "./router/UserApi.js"
+
+dotenv.config();
 
 const PORT = 4000;
 const app =  express();
 app.use(cors());
 app.use(bodyParser.json());
-
-await mongoose.connect(
-    "mongodb+srv://Sanjay:sanju123@bitfumes-mern.zwxhdmc.mongodb.net/?retryWrites=true&w=majority"
-);
-console.log("MongoDB connection is successful");
+app.use(passport.initialize());
+passportConfig(passport);
 
 app.get("/" , (req, res) => {
     res.send("Hello world");
 });
 
-app.get("/transaction", async (req, res) => {
-    const transaction = await Transaction.find({});
-    res.json({transaction});
-})
+app.use("/transaction",TransactionsApi);
+app.use("/auth",AuthApi);
+app.use("/user",UserApi);
 
-app.post("/transaction" ,async (req, res) => {
-    const {amount, description, date } = req.body;
-    const transaction = new Transaction({
-        amount, 
-        description,
-        date,
-    })
-    await transaction.save();
-    res.json({message: "Success"});
-});
-
+await connect();
 
 app.listen(PORT , () => {
-   console.log("Server is runing at http://localhost:4000");
+    console.log("Server is runing at http://localhost:4000 " );
 });
