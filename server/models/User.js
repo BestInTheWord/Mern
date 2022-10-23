@@ -7,8 +7,11 @@ const userSchema = new Schema(
     lastName: { type: String, required: ["Last name field is required"] },
     email: { type: String, required: ["Email field is required"] },
     password: { type: String, required: ["Password field is required"] },
+    categories: [
+      { label: String, icon: String  }
+    ]
   },
   { timestamps: true }
 );
 
-export default new mongoose.model("User", userSchema);
+export default new mongoose.model("user", userSchema);

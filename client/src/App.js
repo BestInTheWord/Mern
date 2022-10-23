@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import AppBar from "./components/AppBar.js";
 import "./index.css";
-import { useSelector, useDispatch } from "react-redux";
-import { Outlet } from "react-router-dom";
-import { getUser } from "./store/auth.js";
+import { useDispatch } from "react-redux";
+import { setUser } from "./store/auth.js";
 import Cookies from "js-cookie";
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
+
 function App() {
   const token = Cookies.get("token");
 
@@ -22,22 +23,22 @@ function App() {
 
     if (res.ok) {
       const user = await res.json();
-      dispatch(getUser(user));
+      dispatch(setUser(user));
     }
     setIsLoading(false);
   }
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  },[] );
   if (isLoading) {
     return <p>Loading,,,</p>;
   }
   return (
-    <>
+    <div>
       <AppBar />
       <Outlet />
-    </>
+    </div>
   );
 }
 

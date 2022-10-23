@@ -6,9 +6,7 @@ import CheckAuth from "./utils/CheckAuth.js";
 import Login from "./Pages/Login.js";
 import Register from "./Pages/Register.js";
 import Guest from "./utils/Guest.js";
-//import Cookies from "js-cookie";
-
-// const token = Cookies.get("token");
+import Category from "./Pages/Category.js"
 
 export default createBrowserRouter([
   {
@@ -17,11 +15,10 @@ export default createBrowserRouter([
       {
         path: "/",
         element: (
-          <CheckAuth>
+           <CheckAuth>
             <Home />
-          </CheckAuth>
+           </CheckAuth>
         ),
-        // element: ,
       },
       {
         path: "/login",
@@ -37,6 +34,14 @@ export default createBrowserRouter([
           <Guest>
             <Register />
           </Guest>
+        ),
+      },
+      {
+        path: "/category",
+        element: (
+          <CheckAuth>
+           <Category />
+         </CheckAuth>
         ),
       },
     ],

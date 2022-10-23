@@ -1,13 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from "body-parser";
-import TransactionsApi from './router/TransactionsApi.js';
 import connect from './database/mongdb.js';
-import AuthApi from './router/AuthApi.js';
 import passport from 'passport';
 import passportConfig from './config/passport.js';
 import * as dotenv from "dotenv";
-import UserApi from "./router/UserApi.js"
+import routes from "./router/index.js"
 
 dotenv.config();
 
@@ -22,9 +20,7 @@ app.get("/" , (req, res) => {
     res.send("Hello world");
 });
 
-app.use("/transaction",TransactionsApi);
-app.use("/auth",AuthApi);
-app.use("/user",UserApi);
+app.use("/",routes)
 
 await connect();
 
